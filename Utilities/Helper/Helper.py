@@ -28,7 +28,7 @@ class print_redirect(QObject):
 
 
 
-def create_action(parent, text, slot=None, shortcut=None, icon=None, tip=None, checkable=False, signal="triggered()"):
+def create_action(parent, text, slot=None, shortcut=None, icon=None, tip=None, checkable=False):
     action = QAction(text, parent)
     if icon is not None:
         action.setIcon(QIcon("./images/%s.png" % icon))

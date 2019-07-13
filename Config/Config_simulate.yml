@@ -1,0 +1,27 @@
+%YAML 1.2
+---
+# Default parameters for the
+# All parameters can be changed to accommodate user needs.
+# All parameters can be changed at runtime with the appropriate config window
+
+Saving:
+  autosave_raw_images: False
+  directory: C:\\tmp\\data\\Lab
+  filename_video: Video # Can be the same filename for video and photo
+  filename_photo: Snap
+  filename_log: Log
+  max_memory: 800 # In megabytes
+
+
+Camera:
+  camera: dummyCamera # the camera to use
+  model: none
+  exposure_time: 100 # Initial exposure time (in ms)
+  binning_x: 1 # Binning
+  binning_y: 1
+
+
+
+Debug:
+  queue_memory: False
+  to_screen: False

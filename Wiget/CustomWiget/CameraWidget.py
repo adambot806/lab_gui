@@ -12,12 +12,12 @@ class CameraWidget(QtWidgets.QWidget):
 
     """
     def __init__(self, parent=None):
-        super(CameraWidget,self).__init__(parent)
+        super(CameraWidget, self).__init__(parent)
 
-        self.start_cam = QtWidgets.QPushButton("start",self)
-        self.pause_cam = QtWidgets.QPushButton("pause",self)
-        self.capture_cam = QtWidgets.QPushButton("capture",self)
-        self.stop_cam = QtWidgets.QPushButton("stop",self)
+        self.start_cam = QtWidgets.QPushButton("start", self)
+        self.pause_cam = QtWidgets.QPushButton("pause", self)
+        self.capture_cam = QtWidgets.QPushButton("capture", self)
+        self.stop_cam = QtWidgets.QPushButton("stop", self)
         self.grid_layout = QtWidgets.QGridLayout()
         self.horizontal_layout = QtWidgets.QHBoxLayout()
         self.horizontal_layout.addWidget(self.start_cam)
@@ -25,7 +25,7 @@ class CameraWidget(QtWidgets.QWidget):
         self.horizontal_layout.addWidget(self.capture_cam)
         self.horizontal_layout.addWidget(self.stop_cam)
 
-        self.grid_layout.addLayout(self.horizontal_layout,0,0)
+        self.grid_layout.addLayout(self.horizontal_layout, 0, 0)
 
         # choose camera to use
 

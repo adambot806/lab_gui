@@ -10,12 +10,11 @@ from CameraThread import workThread
 class cameraViewer(QMainWindow):
     """Main window for the view camera.
     """
-    def __init__(self,camera, slm=None,parent=None):
+    def __init__(self,camera,parent=None):
         super(cameraViewer,self).__init__()
 
         self.camera = camera
         self.parent = parent
-        self.slm = slm
         self.setWindowTitle('Camera Viewer')
         self.viewerWidget = viewerWidget()
         self.setCentralWidget(self.viewerWidget)
@@ -40,7 +39,6 @@ class cameraViewer(QMainWindow):
     def startCamera(self):
         """Starts a continuous acquisition of the camera.
         """
-        # self.emit(QtCore.SIGNAL('stopMainAcquisition'))
         if self.acquiring:
             self.stopCamera()
         else:
@@ -48,7 +46,6 @@ class cameraViewer(QMainWindow):
             self.workerThread = workThread(self.camera)
             self.workerThread.mode = 'video_mode'
             self.workerThread.capture_image.connect(self.getData)
-            # self.connect(self.workerThread,QtCore.SIGNAL('image'),self.getData)
             self.workerThread.start()
 
     def stopCamera(self):
