@@ -11,7 +11,7 @@
 - [Releases and Contributing](#releases-and-contributing)
 - [The Team](#the-team)
 
-## more-about-UALab
+## More about UALab
 ...
 
 ## Installation
