@@ -12,7 +12,7 @@
 - [The Team](#the-team)
 
 ## More about UALab
-...
+**UALab**(*Ultracold Atom Laboratory*) is a open source software developed by undergraduate and graduate students of **SCNU**(*South China Normal University*), the purpose of the software is to assist experimenters with hardware manipulation and data acquisition and analysis in the ultracold atom laboratory.
 
 ## Installation
 
