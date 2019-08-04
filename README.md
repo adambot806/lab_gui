@@ -44,7 +44,7 @@ git clone --recursive ...
 ## Getting Started
 
 You can start with:
-- [The API Reference](...)
+- [Wiki](https://github.com/LingFengZhang24/lab_gui/wiki)
 
 
 ## Releases and Contributing
@@ -54,5 +54,5 @@ You can start with:
 ...
 
 ## License
+See the [LICENSE](https://github.com/LingFengZhang24/lab_gui/blob/master/LICENSE) file for license rights and limitations (MIT).
 
-...
