@@ -1,19 +1,16 @@
-from .BaseCamera import cameraBase
+import numpy as np
+import time
+from .BaseCamera  import cameraBase
 import PyCapture2
 
 
-
-
 class Chameleon(cameraBase):
-
     VIDEO_MODE = 0
     SOFTWARE_TRIGGER = 1
     HARDWARE_TRIGGER = 2
 
-
-
     def __init__(self):
-        super(cameraBase,self).__init__()
+        super(cameraBase, self).__init__()
         # bus manager
         self.bus = PyCapture2.BusManager()
         self.camera = PyCapture2.Camera()
@@ -22,10 +19,10 @@ class Chameleon(cameraBase):
         self.readyCapture = False
         self.mode = self.VIDEO_MODE
 
-
-
     def initializeCamera(self):
         """ Initializes the camera.
+
+        :return:
         """
         if not self.bus.getNumOfCameras():
             print('No cameras detected')
@@ -36,20 +33,17 @@ class Chameleon(cameraBase):
 
         self.camera.connect(guid)
 
-
     def setCameraConfiguration(self, camera_setting):
         """
         setting the base parameters for the camera, include exposure time, gain...
-        :param camera_setting: a setting dict
+        :param camera_setting:
         :return:
         """
         # self.camera.setConfiguration(camera_setting)
         return True
 
-
-    def setImageConfiguration(self,image_setting):
+    def setImageConfiguration(self, image_setting):
         """
-        setting specific image format
 
         :param image_setting:
         :return:
@@ -57,6 +51,10 @@ class Chameleon(cameraBase):
 
         return True
 
+    def enable_embedded_timestamp(self, enable_timestamp):
+        embedded_info = self.camera.getEmbeddedImageInfo()
+        if embedded_info.available.timestamp:
+            self.camera.setEmbeddedImageInfo(timestamp=enable_timestamp)
 
     def setAcquisitionMode(self, mode):
         """
@@ -66,8 +64,9 @@ class Chameleon(cameraBase):
 
         """
         if self.running == True:
-            print("Can't reset camera mode when camera is free running!!")
-            return
+            self.stopAcquisition()
+            self.readyCapture = False
+
         self.mode = mode
 
         if mode == self.VIDEO_MODE:
@@ -96,13 +95,17 @@ class Chameleon(cameraBase):
             }
             self.triggerModeSet(trigger_mode_setting)
 
-            self.readyCapture = True
-
-        return self.getAcquisitionMode()
-
-
     def setShutter(self, shutterValue):
-
+        """
+        Shutter times are scaled by the divider of the basic frame rate.
+        For example, dividing the frame rate by two(e.g.15FPS to7.5FPS)
+        causes the maximum shutter time to double(e.g.66ms to 133ms).
+        :param shutterValue:  int(ms)
+        :return:
+        """
+        if self.running:
+            self.stopAcquisition()
+            self.readyCapture = False
         shutter = PyCapture2.Property()
         shutter.type = PyCapture2.PROPERTY_TYPE.SHUTTER
         shutter.onOff = True
@@ -110,9 +113,16 @@ class Chameleon(cameraBase):
         shutter.absControl = True
         shutter.absValue = shutterValue
         self.camera.setProperty(shutter)
+        self.readyCapture = True
+        # self.startAcquisition()
 
+    def getShutter(self):
+        return self.camera.getProperty(PyCapture2.PROPERTY_TYPE.SHUTTER).absValue
 
     def setExposure(self, exposureVale):
+        if self.running:
+            self.stopAcquisition()
+            self.readyCapture = False
         exposure = PyCapture2.Property()
         exposure.type = PyCapture2.PROPERTY_TYPE.EXPOSURE
         exposure.onOff = True
@@ -120,9 +130,21 @@ class Chameleon(cameraBase):
         exposure.absControl = True
         exposure.absValue = exposureVale
         self.camera.setProperty(exposure)
+        self.readyCapture = True
+        # self.startAcquisition()
 
+    def getExposure(self):
+        return self.camera.getProperty(PyCapture2.PROPERTY_TYPE.EXPOSURE)
 
     def setGain(self, gainValue):
+        """
+
+        :param gainValue:
+        :return:
+        """
+        if self.running:
+            self.stopAcquisition()
+            self.readyCapture = False
         gain = PyCapture2.Property()
         gain.type = PyCapture2.PROPERTY_TYPE.GAIN
         gain.onOff = True
@@ -130,7 +152,8 @@ class Chameleon(cameraBase):
         gain.absControl = True
         gain.absValue = gainValue
         self.camera.setProperty(gain)
-
+        self.readyCapture = True
+        # self.startAcquisition()
 
     def startAcquisition(self):
         """
@@ -138,37 +161,30 @@ class Chameleon(cameraBase):
         """
         if self.readyCapture:
             self.running = True
+            if self.mode == self.SOFTWARE_TRIGGER:
+                self.poll_for_trigger_ready()
+                self.camera.setConfiguration(grabTimeout=5000)
             self.camera.startCapture()
         else:
             print("Not ready for capture image")
-
 
     def retrieveOneImg(self):
         """
         retrieve a image
         """
         try:
-            image = self.camera.retrieveBuffer()
-            return image
+            img_data = self.camera.retrieveBuffer()
+            return img_data
         except PyCapture2.Fc2error as fc2Err:
 
             print('Error retrieving buffer : %s' % fc2Err)
-
-    def retrieveImages(self):
-        """
-        Retrieve images from camera buffer.
-        :return:
-        """
-
-        if self.getAcquisitionMode() == self.VIDEO_MODE:
-            self.video_mode_capture()
-        elif self.getAcquisitionMode() == self.SOFTWARE_TRIGGER:
-            self.software_trigger_capture()
-        elif self.getAcquisitionMode() == self.HARDWARE_TRIGGER:
-            self.hardware_trigger_capture()
-
+            return None
 
     def stopAcquisition(self):
+        """
+        stop capture image
+        :return:
+        """
         self.running = False
         self.camera.stopCapture()
 
@@ -176,21 +192,20 @@ class Chameleon(cameraBase):
         """Stops the acquisition and closes the connection with the camera.
         """
         try:
-            #Closing the camera
+            # Closing the camera
+
             self.stopAcquisition()
             self.readyCapture = False
             self.camera.disconnect()
 
         except:
-            #Monitor failed to close
+            # Monitor failed to close
             return False
-
 
     def getAcquisitionMode(self):
         """Returns the acquisition mode, either continuous or single shot.
         """
         return self.mode
-
 
     # Helper function for setting trigger mode
     def triggerModeSet(self, trigger_mode_setting):
@@ -204,13 +219,12 @@ class Chameleon(cameraBase):
         trigger_mode.mode = trigger_mode_setting['mode']
         trigger_mode.parameter = trigger_mode_setting['parameter']
         trigger_mode.source = trigger_mode_setting['source']
-        if trigger_mode_setting.get('Polarity'):
+        if trigger_mode_setting.get('polarity'):
             trigger_mode.polarity = trigger_mode_setting['polarity']
 
         self.camera.setTriggerMode(trigger_mode)
 
         self.readyCapture = True
-
 
     # Helper function for software trigger
     def poll_for_trigger_ready(self):
@@ -220,43 +234,22 @@ class Chameleon(cameraBase):
             if not reg_val:
                 break
 
-
-
-    # Helper function for specific mode capture images
-    # TODO：capture one image and emit to LabGui main thread
-
-    def video_mode_capture(self):
-        if self.running:
-            img = self.retrieveOneImg()
-
-    def software_trigger_capture(self):
-
-       if self.running:
-            self.poll_for_trigger_ready()
-            img = self.retrieveOneImg()
-
-            self.camera.fireSoftwareTrigger()
-
-    def hardware_trigger_capture(self):
-        if self.running:
-            img = self.retrieveOneImg()
-
-
-
+    def fire_software_trigger(self):
+        software_trigger = 0x62C
+        fire_val = 0x80000000  # write 1 to Bit 0, Set software trigger
+        self.camera.writeRegister(software_trigger, fire_val)
 
 
 if __name__ == "__main__":
-    # camParam = {}
-    # imgParam = {}
+    camParam = {}
+    imgParam = {}
     cam = Chameleon()
     cam.initializeCamera()
-    # if need to specially configure the camera, then uncomment next 2 lines, or use the default setting.
-    # cam.setCameraConfiguration(camParam)
-    # cam.setImageConfiguration(imgParam)
+
+    cam.setCameraConfiguration(camParam)
+    cam.setImageConfiguration(imgParam)
     cam.setAcquisitionMode(0)
     cam.startAcquisition()
-    # for simple test, just invoke retrieveOneImage(), retrieveImages() is not finished yet
-    img = cam.retrieveOneImg()
 
     cam.stopAcquisition()
     cam.stopCamera()

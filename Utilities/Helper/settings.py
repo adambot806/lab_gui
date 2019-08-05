@@ -1,16 +1,19 @@
 
 def inintParams():
-    global params, ImgData
-    params = {
+    global widget_params, instrument_params, imgData
+    widget_params = {
         "Image Display Setting": {
             "bkgStatus": False,
             "pfStatus": False,
             "magStatus": False,
             "imgSource": "disk",
-            "mode": "single mode",
+            "mode": None,
             "magValue": 2,
             "pfMin": 20,
-            "pfMax": 200
+            "pfMax": 200,
+            "img_queue_size": 3,
+            "img_stack_num": 5
+
         },
         "Analyse Data Setting": {
             "roiStatus": False,
@@ -20,10 +23,10 @@ def inintParams():
             "ToPwr": 10,
             "Detu": 100,
             "Dia": 100,
-            "roiRange": [],
-            "AtomNum": 0,
+            "roiRange": {"pos": [], "size": []},  # {'pos': pos(), 'size': size()}
+            "atomNum": 0,
             "cursorPos": [],
-            "fittingData": {
+            "crossSectionData": {
                 "horizontalAxes": [],
                 "verticalAxes": []
                            }
@@ -31,14 +34,12 @@ def inintParams():
         "Miscellanea": {
             "MagStatus": False,
             "MagFactor": 1,
-            "CCDPixelSize": 25,
             "tmpfactor": 1,
             "GSFittingStatue": False,
             "ROILength": 100,
             "NCountStatus": False,
             "NCountsfitting": False,
             "MotionRPStatus": False,
-            "exposureTime": 1,
             "MOTBeamOD": 0,
             "MOTDetuning": 0,
             "MotPower": 0,
@@ -46,15 +47,24 @@ def inintParams():
 
         }
     }
-    ImgData = {
-        "FluorescenceImg": [],
-        "bkgImg": [],
-        "ABSImg": {
-            "WO": [],
-            "WI": [],
-            "BKG": [],
-            "PIC": []
+    instrument_params = {
+        "Camera": {
+            # "camera model": "Chameleon",
+            "camera model": "DummyCamera",
+            "exposure time": 20,
+            "shutter time": 20,
+            "gain value": 1,
+            "CCD pixel size": 25,  # not sure about it, need to confirm
+
+        },
+        "SLM": {
+            "slm model": "LCSLM",
         }
     }
-
+    imgData = {
+        "MainImg": [], # contain the main plot window's image data
+        "BkgImg": [], # contain the background image data when load from disk
+        "WI": [],
+        "WO": []
+        }
     print("Initialize parameters finished")

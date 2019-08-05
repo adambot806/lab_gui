@@ -1,5 +1,8 @@
 from Model.Instruments.Camera.BaseCamera import cameraBase
 import numpy as np
+from PIL import Image
+import datetime
+import time
 
 
 class DummyCamera(cameraBase):
@@ -10,7 +13,7 @@ class DummyCamera(cameraBase):
     VIDEO_MODE = 0
 
     def __init__(self):
-        super(cameraBase,self).__init__()
+        super(cameraBase, self).__init__()
 
         self.running = False
         self.readyCapture = False
@@ -19,15 +22,12 @@ class DummyCamera(cameraBase):
         self.exposure = -1
         self.gain = -1
 
-
-
     def initializeCamera(self):
         """ Initializes the camera.
 
         :return:
         """
         print("Initialize camera")
-
 
     def setAcquisitionMode(self, mode):
         """
@@ -40,21 +40,23 @@ class DummyCamera(cameraBase):
         self.readyCapture = True
         return self.getAcquisitionMode()
 
-
-
     def setShutter(self, shutterValue):
         self.shutter = shutterValue
 
-
+    def getShutter(self):
+        return self.shutter
 
     def setExposure(self, exposureVale):
         self.exposure = exposureVale
 
-
+    def getExposure(self):
+        return self.exposure
 
     def setGain(self, gainValue):
        self.gain = gainValue
 
+    def getGain(self):
+        return self.gain
 
     def startAcquisition(self):
         """
@@ -65,26 +67,15 @@ class DummyCamera(cameraBase):
         else:
             print("Not ready for capture image")
 
-
     def retrieveOneImg(self):
         """
-        retrieve a image
+        retrieve a image name and image data
         """
+        time.sleep(0.5)
+        image_data = Image.open(r'C:\Users\LingfengZ\Documents\GitHub\lab_gui\Debug\images\20190713_213618OD\1.png')
+        # image_name = datetime.datetime.now()
 
-        image = np.random.rand(100,100)
-        return image
-
-
-    def retrieveImages(self):
-        """
-        Retrieve images from camera buffer.
-        :return:
-        """
-
-        self.video_mode_capture()
-
-
-
+        return image_data
 
     def stopAcquisition(self):
         self.running = False
@@ -99,10 +90,12 @@ class DummyCamera(cameraBase):
         except:
             return False
 
+  # Helper function for software trigger
+    def poll_for_trigger_ready(self):
+        time.sleep(.3)  # for debug
 
-    def video_mode_capture(self):
-        if self.running:
-            img = self.retrieveOneImg()
+    def fire_software_trigger(self):
+        time.sleep(.2) # for debug
 
 
 
@@ -116,7 +109,6 @@ if __name__ == "__main__":
     cam.setAcquisitionMode(0)
     cam.startAcquisition()
     img = cam.retrieveOneImg()
-    print(img)
     cam.stopAcquisition()
     cam.stopCamera()
 

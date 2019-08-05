@@ -2,14 +2,11 @@
     Starting point for running the program.
 """
 
-from UUTrack.startMonitor import start
+
 from multiprocessing import Process
+from MainWindow import start_main_win
 
 if __name__ == '__main__':
-
-    confDir = 'Config'
-    confFile = 'Config_simulate.yml'
-
-    p = Process(target = start, args=(confDir,confFile))
+    p = Process(target=start_main_win)
     p.start()
     p.join()
