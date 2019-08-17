@@ -43,6 +43,8 @@ pip install pyqtgraph pyqt5 Pillow pathlib
 
 #### Initialize UALab
 ```
+python your_file_path/buildConfig.py
+
 python your_file_path/startProgram.py
 ```
 
