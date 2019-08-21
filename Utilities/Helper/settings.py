@@ -1,4 +1,3 @@
-
 def inintParams():
     global widget_params, instrument_params, imgData
     widget_params = {
@@ -6,64 +5,46 @@ def inintParams():
             "bkgStatus": False,
             "pfStatus": False,
             "magStatus": False,
-            "imgSource": "disk",
-            "mode": None,
+            "imgSource": "disk",  # default is disk, once click the start experiment button, then change to camera
+            "mode": 0,  # 0 is video mode; 2 is hardware mode
             "magValue": 2,
             "pfMin": 20,
             "pfMax": 200,
-            "img_queue_size": 3,
-            "img_stack_num": 5
-
+            "img_stack_num": 6
         },
         "Analyse Data Setting": {
             "roiStatus": False,
-            "crossHStatus": False,
-            "calAtomStatus": False,
-            "fittingStatus": False,
+            "add_cross_axes": False,
             "ToPwr": 10,
             "Detu": 100,
             "Dia": 100,
-            "roiRange": {"pos": [], "size": []},  # {'pos': pos(), 'size': size()}
-            "atomNum": 0,
-            "cursorPos": [],
-            "crossSectionData": {
-                "horizontalAxes": [],
-                "verticalAxes": []
-                           }
         },
         "Miscellanea": {
             "MagStatus": False,
             "MagFactor": 1,
             "tmpfactor": 1,
             "GSFittingStatue": False,
-            "ROILength": 100,
             "NCountStatus": False,
             "NCountsfitting": False,
             "MotionRPStatus": False,
             "MOTBeamOD": 0,
             "MOTDetuning": 0,
             "MotPower": 0,
-
-
         }
     }
     instrument_params = {
         "Camera": {
-            # "camera model": "Chameleon",
-            "camera model": "DummyCamera",
+            "index": None,
             "exposure time": 20,
             "shutter time": 20,
             "gain value": 1,
-            "CCD pixel size": 25,  # not sure about it, need to confirm
-
         },
         "SLM": {
             "slm model": "LCSLM",
         }
     }
     imgData = {
-        "MainImg": [], # contain the main plot window's image data
-        "BkgImg": [], # contain the background image data when load from disk
+        "BkgImg": [],  # contain the background image data when load from disk
         "WI": [],
         "WO": []
         }

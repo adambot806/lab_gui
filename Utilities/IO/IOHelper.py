@@ -8,8 +8,6 @@ CONFIG_FILE = "config.txt"
 CONFIG_FILE_PATH = MAIN_DIR + CONFIG_FILE
 
 DATA_PATH = "DATA_PATH"
-WIDGET_SETTINGS = "WIDGET_SETTINGS"
-INSTRUMENT_SETTINGS = "INSTRUMENT_SETTING"
 
 
 def create_config_file(config_path=CONFIG_FILE_PATH):
@@ -23,9 +21,6 @@ def create_config_file(config_path=CONFIG_FILE_PATH):
     else:
         of = open(config_path, 'w')
         of.write("{}={}Debug\images{}\n".format(DATA_PATH, MAIN_DIR, os.sep))
-        of.write("{}={}widget_settings{}widgets.txt\n".format(WIDGET_SETTINGS, MAIN_DIR, os.sep))
-        of.write("{}={}instrument_settings{}instrument.txt\n".format(INSTRUMENT_SETTINGS, MAIN_DIR, os.sep))
-
         of.close()
 
 

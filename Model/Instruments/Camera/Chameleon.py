@@ -8,28 +8,22 @@ class Chameleon(cameraBase):
     VIDEO_MODE = 0
     SOFTWARE_TRIGGER = 1
     HARDWARE_TRIGGER = 2
-
     def __init__(self):
         super(cameraBase, self).__init__()
-        # bus manager
-        self.bus = PyCapture2.BusManager()
         self.camera = PyCapture2.Camera()
 
         self.running = False
         self.readyCapture = False
         self.mode = self.VIDEO_MODE
 
-    def initializeCamera(self):
-        """ Initializes the camera.
 
+    def initializeCamera(self, index=0):
+        """ Initializes the camera.
         :return:
         """
-        if not self.bus.getNumOfCameras():
-            print('No cameras detected')
-            exit()
-
         # get camera guid to control it
-        guid = self.bus.getCameraFromIndex(0)
+        self.bus = PyCapture2.BusManager()
+        guid = self.bus.getCameraFromIndex(index)
 
         self.camera.connect(guid)
 
@@ -124,7 +118,7 @@ class Chameleon(cameraBase):
             self.stopAcquisition()
             self.readyCapture = False
         exposure = PyCapture2.Property()
-        exposure.type = PyCapture2.PROPERTY_TYPE.EXPOSURE
+        exposure.type = PyCapture2.PROPERTY_TYPE.AUTO_EXPOSURE
         exposure.onOff = True
         exposure.autoManualMode = False
         exposure.absControl = True
@@ -134,7 +128,7 @@ class Chameleon(cameraBase):
         # self.startAcquisition()
 
     def getExposure(self):
-        return self.camera.getProperty(PyCapture2.PROPERTY_TYPE.EXPOSURE)
+        return self.camera.getProperty(PyCapture2.PROPERTY_TYPE.AUTO_EXPOSURE )
 
     def setGain(self, gainValue):
         """
@@ -176,7 +170,9 @@ class Chameleon(cameraBase):
             img_data = self.camera.retrieveBuffer()
             return img_data
         except PyCapture2.Fc2error as fc2Err:
-
+            # errorNum == 18 is timeout error
+            if fc2Err.errorNum == 18:
+                return None
             print('Error retrieving buffer : %s' % fc2Err)
             return None
 
@@ -238,6 +234,34 @@ class Chameleon(cameraBase):
         software_trigger = 0x62C
         fire_val = 0x80000000  # write 1 to Bit 0, Set software trigger
         self.camera.writeRegister(software_trigger, fire_val)
+
+    def set_grab_timeout(self, grab_timeout):
+        self.camera.setConfiguration(grabTimeout=grab_timeout)
+
+    @staticmethod
+    def get_camera_info( camera):
+        cam_info = camera.getCameraInfo()
+        return (cam_info.serialNumber,  cam_info.modelName)
+
+    @staticmethod
+    def getPortInfo():
+        # Ensure sufficient cameras are found
+        bus = PyCapture2.BusManager()
+        num_cams = bus.getNumOfCameras()
+        camera_infos = []
+        print('Number of cameras detected: ', num_cams)
+        if not num_cams:
+            print('Insufficient number of cameras. Exiting...')
+            return None
+
+        for i in range(num_cams):
+            camera_guid = bus.getCameraFromIndex(i)
+            camera = PyCapture2.Camera()
+            camera.connect(camera_guid)
+            serial_num, model_name = Chameleon.get_camera_info(camera)
+            camera_infos.append("{}&{}&{}".format(str(model_name), serial_num, i))
+            camera.disconnect()
+        return camera_infos
 
 
 if __name__ == "__main__":

@@ -1,3 +1,0 @@
-DATA_PATH=C:\Users\LingfengZ\Documents\GitHub\lab_gui\Debug\images\
-WIDGET_SETTINGS=C:\Users\LingfengZ\Documents\GitHub\lab_gui\widget_settings\demo_dice.txt
-INSTRUMENT_SETTING=C:\Users\LingfengZ\Documents\GitHub\lab_gui\instrument_settings\
