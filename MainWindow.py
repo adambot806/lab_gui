@@ -370,7 +370,7 @@ class TestMainWindow(QMainWindow):
         """
         load images to image queue, with image name and data
         """
-        settings.widget_params["Image Display Setting"]["imgSource"] == "disk"
+        settings.widget_params["Image Display Setting"]["imgSource"] = "disk"
         fpath = IOHelper.get_config_setting('DATA_PATH')
         img_fpath = QFileDialog.getExistingDirectory(self, "Open File", fpath)
         img_file = Path(img_fpath)
