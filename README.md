@@ -28,7 +28,9 @@ conda activate UALab
 
 Common
 ```
-pip install pyqtgraph pyqt5 Pillow pathlib
+pip install pyqt5==5.12.2 Pillow==6.1.0 pathlib==1.0.1
+pip install git+https://github.com/pyqtgraph/pyqtgraph@develop
+
 ```
 
 #### Get the UALab Source
