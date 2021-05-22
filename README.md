@@ -1,5 +1,3 @@
-![UALab logo](https://github.com/LingFengZhang24/lab_gui/blob/master/UALab.png)
---------------------------------------------------------------------------------
 
 **UALab** *is a software to assist experimenters with hardware manipulation, data acquisition and analysis in the ultracold atom laboratory.*
 
@@ -54,12 +52,12 @@ python your_file_path/startProgram.py
 You can start with:
 - [Wiki](https://github.com/LingFengZhang24/lab_gui/wiki)
 
-
+<!-- 
 ## Releases and Contributing
 ...
 
 ## The Team
-...
+... -->
 
 ## License
 See the [LICENSE](https://github.com/LingFengZhang24/lab_gui/blob/master/LICENSE) file for license rights and limitations (MIT).
